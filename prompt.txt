@@ -1,0 +1,13 @@
+I need a powershell script that will fulfill the following requirements:
+
+1. Ask for user input for the following information sections: seed, deck, hands, blinds, vouchers.
+2. When requesting the seed information from the user, ask for 3 things: seed number, deck name, and stake color
+3. When requesting the deck information from the user, ask for 3 things: card name, end value, and modifications. 
+4. Asking for deck information should be a loop, asking if there is another card to record before moving on to the next section. 
+5. When requesting hand information from the user, ask for 3 things: hand level, chips x mult, and times played.
+6. Asking for hand information should be a loop, asking for the information for the following hand names: Straight Flush, Four of a Kind, Full House, Flush, Straight, Three of a Kind, Two Pair, Pair, and High Card.
+7. When requesting blind information from the user, ask for 3 things: blind status, minimum score, and tag.
+8. Asking for blind information should be a loop, asking for the information for the following blind names: Small Blind, Big Blind, and Boss Blind
+9. When requesting blind information for the Boss Blind, additionally ask the user for the Boss Blind's name.
+10. When requesting voucher information from the user, ask for 1 thing, the voucher name. 
+11. Asking for voucher information should be a loop, asking if there is another card to record before moving on to the next section. 
