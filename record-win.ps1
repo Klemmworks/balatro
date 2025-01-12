@@ -10,8 +10,8 @@ function Get-Seed {
 }
 
 # Function to ask for deck information in a loop
-function Get-Deck {
-    Write-Host "REQUESTING: Deck Information"
+function Get-Jokers {
+    Write-Host "REQUESTING: Joker Information"
     $deck = @()
     do {
         $card = @{
@@ -62,6 +62,7 @@ function Get-Blinds {
 
         if ($blind -eq "Boss Blind") {
             $blindInfo["Blind Name"] = Read-Host "Enter the Boss Blind's name"
+            $blindInfo["Blind Status"] = "Defeated"
         }
         
         $blinds += $blindInfo
@@ -90,7 +91,7 @@ function Main {
     $seedInfo = Get-Seed
     
     # Collect deck information
-    $deck = Get-Deck
+    $deck = Get-Jokers
     
     # Collect hand information
     $hands = Get-Hands
@@ -110,7 +111,7 @@ function Main {
         # If the file does not exist, create it
         New-Item -Path $overviewFilePath -ItemType File
         "## Winning Seeds" >> $overviewFilePath
-        "Run Seed|Deck Name|Stake Color" >> $overviewFilePath
+        "Run Seed|Deck Name|Stake" >> $overviewFilePath
         "-|-|-" >> $overviewFilePath
         Write-Host "File created: $overviewFilePath (should only happen once)"
     } else {
@@ -131,14 +132,14 @@ function Main {
     
 
     "# $($seedInfo['Deck Name'])-$($seedInfo['Stake Color'])-$($seedInfo['Seed Number'])" >> $detailFilePath
-    "Seed: $($seedInfo['Seed Number'])" >> $detailFilePath
-    "Deck: $($seedInfo['Deck Name'])" >> $detailFilePath
-    "Stake: $($seedInfo['Stake Color'])" >> $detailFilePath
+    "**Seed:** *$($seedInfo['Seed Number'])*" >> $detailFilePath
+    "**Deck:** *$($seedInfo['Deck Name'])*" >> $detailFilePath
+    "**Stake:** *$($seedInfo['Stake Color'])*" >> $detailFilePath
     Write-Host "Run Info written to Detail File"
     
     "## Jokers:" >> $detailFilePath
     "*$ included when impactful" >> $detailFilePath
-    "Rank|Card|Value (x+$*)|Modifications" >> $detailFilePath
+    "Rank|Card|Value ($*x+)|Modifications" >> $detailFilePath
     "-|-|-|- " >> $detailFilePath
     $index = 1
     foreach ($card in $deck) {
@@ -167,7 +168,7 @@ function Main {
      
     "## Vouchers:" >> $detailFilePath
     foreach ($voucher in $vouchers) {
-        $voucher >> $detailFilePath
+        "$voucher," >> $detailFilePath
     }
     Write-Host "Voucher Info written to Detail File"
 }
