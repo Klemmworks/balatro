@@ -1,25 +1,26 @@
 # Function to ask for seed information
 function Get-Seed {
-    Write-Host "REQUESTING: Seed Information"
+    Write-Host "=========== Run Overview ==========="
     $seedInfo = @{
-        "Seed Number" = Read-Host "Enter the seed number"
-        "Deck Name" = Read-Host "Enter the deck name"
-        "Stake Color" = Read-Host "Enter the stake color"
+        "Seed Number" = Read-Host "|| Seed"
+        "Deck Name" = Read-Host "|| Deck"
+        "Stake Color" = Read-Host "|| Stake"
     }
     return $seedInfo
 }
 
 # Function to ask for deck information in a loop
 function Get-Jokers {
-    Write-Host "REQUESTING: Joker Information"
+    Write-Host "============== Jokers =============="
     $deck = @()
     do {
         $card = @{
-            "Card Name" = Read-Host "Enter the card name (or type 'done' to finish)"
+            "Card Name" = Read-Host "|| Card Name (or type 'done' to finish)"
         }
         if ($card["Card Name"] -ne "done") {
-            $card["End Value"] = Read-Host "Enter the end value"
-            $card["Modifications"] = Read-Host "Enter modifications"
+            $name = $card["Card Name"]
+            $card["End Value"] = Read-Host "|| End Value"
+            $card["Modifications"] = Read-Host "|| Modifications"
         }
         if ($card["Card Name"] -ne "done") {
             $deck += $card
@@ -30,15 +31,15 @@ function Get-Jokers {
 
 # Function to ask for hand information
 function Get-Hands {
-    Write-Host "REQUESTING: Hand Information"
+    Write-Host "========== Upgraded Hands =========="
     $hands = @()
     $handLevels = @("Straight Flush", "Four of a Kind", "Full House", "Flush", "Straight", "Three of a Kind", "Two Pair", "Pair", "High Card")
     
     foreach ($hand in $handLevels) {
         $handInfo = @{
             "Hand Name" = $hand
-            "Hand Level" = Read-Host "Enter $hand level"
-            "Times Played" = Read-Host "Enter $hand play count"
+            "Hand Level" = Read-Host "|| $hand level"
+            "Times Played" = Read-Host "|| $hand play count"
         }
         $hands += $handInfo
     }
@@ -47,7 +48,7 @@ function Get-Hands {
 
 # Function to ask for blind information
 function Get-Blinds {
-    Write-Host "REQUESTING: Blind Information"
+    Write-Host "============ Last Blind ============"
     $blinds = @()
     $blindLevels = @("Small Blind", "Big Blind", "Boss Blind")
     
@@ -58,12 +59,12 @@ function Get-Blinds {
         }
         
         if ($blind -ne "Boss Blind") {
-            $blindInfo["Tag"] = Read-Host "Enter $blind tag"
-            $blindInfo["Blind Status"] = Read-Host "Enter $blind status"
+            $blindInfo["Tag"] = Read-Host "|| $blind tag"
+            $blindInfo["Blind Status"] = Read-Host "|| $blind status"
         }
 
         if ($blind -eq "Boss Blind") {
-            $blindInfo["Blind Name"] = Read-Host "Enter the Boss Blind's name"
+            $blindInfo["Blind Name"] = Read-Host "|| Boss Blind name"
             $blindInfo["Blind Status"] = "Defeated"
         }
         
@@ -74,10 +75,10 @@ function Get-Blinds {
 
 # Function to ask for voucher information
 function Get-Vouchers {
-    Write-Host "REQUESTING: Voucher Information"
+    Write-Host "============= Vouchers ============="
     $vouchers = @()
     do {
-        $voucherName = Read-Host "Enter voucher name (or type 'done' to finish)"
+        $voucherName = Read-Host "|| Voucher Name (or type 'done' to finish)"
         if ($voucherName -ne "done") {
             $vouchers += $voucherName
         }
