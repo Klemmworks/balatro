@@ -88,8 +88,8 @@ function Get-Vouchers {
 # Main script to collect all information
 function Main {
     param (
-        [switch]$Dry,
-        [switch]$Detail
+        [switch]$Dry = $false,
+        [switch]$Detail = $false
     )
 
     Write-Host "Welcome to the Balatro Winning Run Recorder!"
@@ -129,7 +129,7 @@ function Main {
     if (-Not (Test-Path $detailFilePath)) {
         # If the file does not exist, create it
         if (-not $Dry) {
-            New-Item -Path $detailFilePath -ItemType File
+            $null = New-Item -Path $detailFilePath -ItemType File
         }
         Write-Host "File created: $detailFilePath (this is good)"
     } else {
