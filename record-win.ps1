@@ -18,7 +18,6 @@ function Get-Jokers {
             "Card Name" = Read-Host "|| Card Name (or type 'done' to finish)"
         }
         if ($card["Card Name"] -ne "done") {
-            $name = $card["Card Name"]
             $card["End Value"] = Read-Host "|| End Value"
             $card["Modifications"] = Read-Host "|| Modifications"
         }
@@ -86,101 +85,6 @@ function Get-Vouchers {
     return $vouchers
 }
 
-function Out-File {
-    param (
-        [hashtable]$Seed,
-        [array]$Jokers,
-        [array]$Hands,
-        [array]$Blinds,
-        [object]$Vouchers,
-        [string]$AggregateFilepath,
-        [string]$DetailFilepath
-    )
-    
-    # Write the collected information
-    "$($Seed['Seed Number'])|$($Seed['Deck Name'])|$($Seed['Stake Color'])" >> $AggregateFilepath
-    Write-Host "Seed Info written to Overview File"
-    
-
-    "# $($Seed['Deck Name'])-$($Seed['Stake Color'])-$($Seed['Seed Number'])" >> $DetailFilepath
-    "**Seed:** *$($Seed['Seed Number'])*" >> $DetailFilepath
-    "**Deck:** *$($Seed['Deck Name'])*" >> $DetailFilepath
-    "**Stake:** *$($Seed['Stake Color'])*" >> $DetailFilepath
-    Write-Host "Run Info written to Detail File"
-    
-    "## Jokers:" >> $DetailFilepath
-    "*$ included when impactful" >> $DetailFilepath
-    "Rank|Card|Value ($*x+)|Modifications" >> $DetailFilepath
-    "-|-|-|- " >> $DetailFilepath
-    $index = 1
-    foreach ($joker in $Jokers) {
-        "$index|$($joker['Card Name'])|$($joker['End Value'])|$($joker['Modifications'])" >> $DetailFilepath
-        $index = $index + 1
-    }
-    Write-Host "Joker Info written to Detail File"
-
-     
-    "## Hands:" >> $DetailFilepath
-    "Level|Hand|Chips x Mult|Play Count" >> $DetailFilepath
-    "-|-|-|- " >> $DetailFilepath
-    foreach ($hand in $Hands) {
-        "$($hand['Hand Level'])|$($hand['Hand Name'])|$($hand['Chips x Mult'])|$($hand['Times Played'])" >> $DetailFilepath
-    }
-    Write-Host "Hand Info written to Detail File"
-    
-    "## Blinds:" >> $DetailFilepath
-    "Blind|Status|Min|Tag" >> $DetailFilepath
-    "-|-|-|- " >> $DetailFilepath
-    foreach ($blind in $Blinds) {
-        "$($blind['Blind Name'])|$($blind['Blind Status'])|$($blind['Minimum Score'])|$($blind['Tag'])" >> $DetailFilepath
-    }
-    Write-Host "Blind Info written to Detail File"
-
-     
-    "## Vouchers:" >> $DetailFilepath
-    foreach ($voucher in $Vouchers) {
-        "$voucher," >> $DetailFilepath
-    }
-    Write-Host "Voucher Info written to Detail File"
-}
-
-function Out-Console {
-    param (
-        [hashtable]$Seed,
-        [array]$Jokers,
-        [array]$Hands,
-        [array]$Blinds,
-        [object]$Vouchers
-    )
-
-    # Display the collected information
-    Write-Host "Collected Information:"
-    Write-Host "Seed Info: Seed Number - $($Seed['Seed Number']), Deck Name - $($Seed['Deck Name']), Stake Color - $($Seed['Stake Color'])"
-
-    Write-Host "Deck Info:"
-    foreach ($joker in $Jokers) {
-        Write-Host "Card: $($joker['Card Name']), End Value: $($joker['End Value']), Modifications: $($joker['Modifications'])"
-    }
-
-    Write-Host "Hand Info:"
-    foreach ($hand in $Hands) {
-        Write-Host "Hand Level: $($hand['Hand Level']), Chips x Mult: $($hand['Chips x Mult']), Times Played: $($hand['Times Played'])"
-    }
-
-    Write-Host "Blind Info:"
-    foreach ($blind in $Blinds) {
-        Write-Host "Blind Status: $($blind['Blind Status']), Min Score: $($blind['Minimum Score']), Tag: $($blind['Tag'])"
-        if ($blind.ContainsKey("Boss Blind Name")) {
-            Write-Host "Boss Blind Name: $($blind['Boss Blind Name'])"
-        }
-    }
-
-    Write-Host "Voucher Info:"
-    foreach ($voucher in $Vouchers) {
-        Write-Host "Voucher Name: $voucher"
-    }
-}
-
 # Main script to collect all information
 function Main {
     param (
@@ -233,12 +137,82 @@ function Main {
     }
 
     if ($Detail -or $Dry) {
-        Out-Console -Seed $seed -Jokers $jokers -Hands $hands -Blinds $blinds -Vouchers $vouchers
+        # Out-Console
+        Write-Host "Collected Information:"
+        Write-Host "Seed Info: Seed Number - $($seed['Seed Number']), Deck Name - $($seed['Deck Name']), Stake Color - $($seed['Stake Color'])"
+
+        Write-Host "Deck Info:"
+        foreach ($joker in $jokers) {
+            Write-Host "Card: $($joker['Card Name']), End Value: $($joker['End Value']), Modifications: $($joker['Modifications'])"
+        }
+
+        Write-Host "Hand Info:"
+        foreach ($hand in $hands) {
+            Write-Host "Hand Level: $($hand['Hand Level']), Chips x Mult: $($hand['Chips x Mult']), Times Played: $($hand['Times Played'])"
+        }
+
+        Write-Host "Blind Info:"
+        foreach ($blind in $blinds) {
+            Write-Host "Blind Status: $($blind['Blind Status']), Min Score: $($blind['Minimum Score']), Tag: $($blind['Tag'])"
+            if ($blind.ContainsKey("Boss Blind Name")) {
+                Write-Host "Boss Blind Name: $($blind['Boss Blind Name'])"
+            }
+        }
+
+        Write-Host "Voucher Info:"
+        foreach ($voucher in $vouchers) {
+            Write-Host "Voucher Name: $voucher"
+        }
     }
+
     if (-not $Dry) {
-        Out-File -Seed $seed -Jokers $jokers -Hands $hands -Blinds $blinds -Vouchers $vouchers -AggregateFilepath $overviewFilePath -DetailFilepath $detailFilePath
+        # Out-File 
+        "$($seed['Seed Number'])|$($seed['Deck Name'])|$($seed['Stake Color'])" >> $overviewFilePath
+        Write-Host "Seed Info written to Overview File"
+        
+
+        "# $($seed['Deck Name'])-$($seed['Stake Color'])-$($seed['Seed Number'])" >> $detailFilePath
+        "**Seed:** *$($seed['Seed Number'])*" >> $detailFilePath
+        "**Deck:** *$($seed['Deck Name'])*" >> $detailFilePath
+        "**Stake:** *$($seed['Stake Color'])*" >> $detailFilePath
+        Write-Host "Run Info written to Detail File"
+        
+        "## Jokers:" >> $detailFilePath
+        "*$ included when impactful" >> $detailFilePath
+        "Rank|Card|Value ($*x+)|Modifications" >> $detailFilePath
+        "-|-|-|- " >> $detailFilePath
+        $index = 1
+        foreach ($joker in $jokers) {
+            "$index|$($joker['Card Name'])|$($joker['End Value'])|$($joker['Modifications'])" >> $detailFilePath
+            $index = $index + 1
+        }
+        Write-Host "Joker Info written to Detail File"
+
+        
+        "## Hands:" >> $detailFilePath
+        "Level|Hand|Chips x Mult|Play Count" >> $detailFilePath
+        "-|-|-|- " >> $detailFilePath
+        foreach ($hand in $hands) {
+            "$($hand['Hand Level'])|$($hand['Hand Name'])|$($hand['Chips x Mult'])|$($hand['Times Played'])" >> $detailFilePath
+        }
+        Write-Host "Hand Info written to Detail File"
+        
+        "## Blinds:" >> $detailFilePath
+        "Blind|Status|Min|Tag" >> $detailFilePath
+        "-|-|-|- " >> $detailFilePath
+        foreach ($blind in $blinds) {
+            "$($blind['Blind Name'])|$($blind['Blind Status'])|$($blind['Minimum Score'])|$($blind['Tag'])" >> $detailFilePath
+        }
+        Write-Host "Blind Info written to Detail File"
+
+        
+        "## Vouchers:" >> $detailFilePath
+        foreach ($voucher in $vouchers) {
+            "$voucher," >> $detailFilePath
+        }
+        Write-Host "Voucher Info written to Detail File"
     }
 }
 
 # Run the main function
-Main -Dry
+Main
