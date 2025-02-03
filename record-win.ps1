@@ -1,10 +1,27 @@
 # Function to ask for seed information
 function Get-Seed {
     Write-Host "=========== Run Overview ==========="
+    Write-Host "|| If recording a challenge win, "
+    Write-Host "|| Deck  = 'challenge'"
+    Write-Host "|| Stake = <challenge name>"
+    Write-Host "||----------------------------------"
     $seedInfo = @{
-        "Seed Number" = Read-Host "|| Seed"
-        "Deck Name" = Read-Host "|| Deck"
-        "Stake Color" = Read-Host "|| Stake"
+        "Seed Number" = Read-Host "|| Seed (0000AAAA)"
+        "Deck Name" = Read-Host "|| Deck (red)"
+        "Stake Color" = Read-Host "|| Stake (white)"
+    }
+    if ($seedInfo["Seed Number"] -eq "") {
+        $seedInfo["Seed Number"] = "0000AAAA"
+    }
+    if ($seedInfo["Deck Name"] -eq "") {
+        $seedInfo["Deck Name"] = "red"
+    }
+    if ($seedInfo["Stake Color"] -eq "") {
+        $seedInfo["Stake Color"] = "white"
+    } else {
+        $str1 = $seedInfo["Stake Color"]
+        $str2 = $str1 -replace " ", "-"
+        $seedInfo["Stake Color"] = $str2
     }
     return $seedInfo
 }
@@ -15,11 +32,20 @@ function Get-Jokers {
     $deck = @()
     do {
         $card = @{
-            "Card Name" = Read-Host "|| Card Name (or type 'done' to finish)"
+            "Card Name" = Read-Host "|| Card Name, or 'done' to finish (done)"
+        }
+        if ($card["Card Name"] -eq "") {
+            $card["Card Name"] = "done"
         }
         if ($card["Card Name"] -ne "done") {
-            $card["End Value"] = Read-Host "|| End Value"
-            $card["Modifications"] = Read-Host "|| Modifications"
+            $card["End Value"] = Read-Host "|| End Value (n/a)"
+            $card["Modifications"] = Read-Host "|| Modifications (none)"
+        }
+        if ($card["End Value"] -eq "") {
+            $card["End Value"] = "n/a"
+        }
+        if ($card["End Value"] -eq "") {
+            $card["End Value"] = "none"
         }
         if ($card["Card Name"] -ne "done") {
             $deck += $card
@@ -32,13 +58,23 @@ function Get-Jokers {
 function Get-Hands {
     Write-Host "========== Upgraded Hands =========="
     $hands = @()
-    $handLevels = @("Straight Flush", "Four of a Kind", "Full House", "Flush", "Straight", "Three of a Kind", "Two Pair", "Pair", "High Card")
+    $handLevels = @("Flush Full House", "Straight Flush", "Four of a Kind", "Full House", "Flush", "Straight", "Three of a Kind", "Two Pair", "Pair", "High Card")
+    $withflushfullhouse = Read-Host "Flush Full House? (y/N)"
+    if ($withflushfullhouse -eq "") {
+        $handLevels = @("Straight Flush", "Four of a Kind", "Full House", "Flush", "Straight", "Three of a Kind", "Two Pair", "Pair", "High Card")
+    }
     
     foreach ($hand in $handLevels) {
         $handInfo = @{
             "Hand Name" = $hand
-            "Hand Level" = Read-Host "|| $hand level"
-            "Times Played" = Read-Host "|| $hand play count"
+            "Hand Level" = Read-Host "|| $hand level (1)"
+            "Times Played" = Read-Host "|| $hand play count (0)"
+        }
+        if ($handInfo["Hand Level"] -eq "") {
+            $handInfo["Hand Level"] = "1"
+        }
+        if ($handInfo["Times Played"] -eq "") {
+            $handInfo["Times Played"] = "0"
         }
         $hands += $handInfo
     }
@@ -58,12 +94,20 @@ function Get-Blinds {
         }
         
         if ($blind -ne "Boss Blind") {
-            $blindInfo["Tag"] = Read-Host "|| $blind tag"
-            $blindInfo["Blind Status"] = Read-Host "|| $blind status"
+            $blindInfo["Tag"] = Read-Host "|| $blind tag (speed)"
+            if ($blindInfo["Tag"] -eq "") {
+                $blindInfo["Tag"] = "speed"
+            }
+            $blindInfo["Blind Status"] = Read-Host "|| $blind status (defeated)"
+            if ($blindInfo["Blind Status"] -eq "") {
+                $blindInfo["Blind Status"] = "defeated"
+            }
         }
-
         if ($blind -eq "Boss Blind") {
-            $blindInfo["Blind Name"] = Read-Host "|| Boss Blind name"
+            $blindInfo["Blind Name"] = Read-Host "|| Boss Blind name (violet vessel)"
+            if ($blindInfo["Blind Name"] -eq "") {
+                $blindInfo["Blind Name"] = "violet vessel"
+            }
             $blindInfo["Blind Status"] = "Defeated"
         }
         
@@ -77,7 +121,10 @@ function Get-Vouchers {
     Write-Host "============= Vouchers ============="
     $vouchers = @()
     do {
-        $voucherName = Read-Host "|| Voucher Name (or type 'done' to finish)"
+        $voucherName = Read-Host "|| Voucher Name, or 'done' to finish (done)"
+        if ($voucherName -eq "") {
+            $voucherName = "done"
+        }
         if ($voucherName -ne "done") {
             $vouchers += $voucherName
         }
@@ -111,7 +158,7 @@ function Main {
 
     $scriptDirectory = $PSScriptRoot
     $overviewFilePath = "$scriptDirectory\balatro.md"
-    $detailFilePath = "$scriptDirectory\winning-details\$($seed['Deck Name'])-$($seed['Stake Color'])-$($seed['Seed Number']).md"
+    $detailFilePath = "$scriptDirectory\winning-details\$($($seed['Deck Name']).Trim())-$($($seed['Stake Color']).Trim())-$($($seed['Seed Number']).Trim()).md"
 
     if (-Not (Test-Path $overviewFilePath)) {
         # If the file does not exist, create it
