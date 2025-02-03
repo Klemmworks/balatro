@@ -1,9 +1,46 @@
 param (
-    [switch]$dry,
-    [switch]$d,
-    [switch]$s,
-    [switch]$i
+    [switch]$Dry,
+    [switch]$Verbose,
+    [switch]$Silent,
+    [switch]$Interactive,
+    [switch]$Help
 )
+
+if ($Help) {
+    Write-Host "SYNTAX"
+    Write-Host "record-win.ps1 [options]"
+    Write-Host ""
+    Write-Host "OPTIONS"
+    Write-Host "    -d, -dry           Display effects of running script without making changes"
+    Write-Host "    -h, -help          Display help menu"
+    Write-Host "    -i, -interactive   Enables GUI input for certain questions"
+    Write-Host "    -s, -silent        Does not dipslay output text"
+    Write-Host "    -v, -verbose       Display additional script runtime information"
+    exit
+}
+
+if ($Silent) {
+    Write-Host "Silent mode enabled"
+}
+
+if (-not $Silent) {
+    if ($Dry) {
+        Write-Host "Dry run enabled"
+    }
+    
+    if ($Verbose) {
+        Write-Host "Verbose mode enabled"
+    }
+
+    if ($Interactive) {
+        Write-Host "Interactive mode enabled"
+    }
+}
+
+if ($Interactive) {
+    Write-Host "Sorry, that feature isn't completely ready yet. Please try again later.";
+    exit
+}
 
 # Function to ask for seed information
 function Get-Seed {
@@ -140,8 +177,6 @@ function Get-Vouchers {
     return $vouchers
 }
 
-
-
 Write-Host "Welcome to the Balatro Winning Run Recorder!"
 
 # Collect seed information
@@ -165,36 +200,36 @@ $detailFilePath = "$scriptDirectory\winning-details\$($($seed['Deck Name']).Trim
 
 if (-Not (Test-Path $overviewFilePath)) {
     # If the file does not exist, create it
-    if (-not $dry) {
+    if (-not $Dry) {
         New-Item -Path $overviewFilePath -ItemType File
         "## Winning Seeds" >> $overviewFilePath
         "Run Seed|Deck Name|Stake" >> $overviewFilePath
         "-|-|-" >> $overviewFilePath
     }
-    if (-not $s) {
+    if (-not $Silent) {
         Write-Host "File created: $overviewFilePath (should only happen once)"
     }
 } else {
-    if (-not $s) {
+    if (-not $Silent) {
         Write-Host "File already exists: $overviewFilePath (this is good)"
     }
 }
 
 if (-Not (Test-Path $detailFilePath)) {
     # If the file does not exist, create it
-    if (-not $dry) {
+    if (-not $Dry) {
         $null = New-Item -Path $detailFilePath -ItemType File
     }
-    if (-not $s) {
+    if (-not $Silent) {
         Write-Host "File created: $detailFilePath (this is good)"\
     }
 } else {
-    if (-not $s) {
+    if (-not $Silent) {
         Write-Host "File already exists: $detailFilePath (this is bad)"
     }
 }
 
-if (($d -or $dry) -and (-not $s)) {
+if (($Verbose -or $Dry) -and (-not $Silent)) {
     # Out-Console
     Write-Host "Collected Information:"
     Write-Host "Seed Info: Seed Number - $($seed['Seed Number']), Deck Name - $($seed['Deck Name']), Stake Color - $($seed['Stake Color'])"
@@ -223,10 +258,10 @@ if (($d -or $dry) -and (-not $s)) {
     }
 }
 
-if (-not $dry) {
+if (-not $Dry) {
     # Out-File 
     "$($seed['Seed Number'])|$($seed['Deck Name'])|$($seed['Stake Color'])" >> $overviewFilePath
-    if (-not $s) {
+    if (-not $Silent) {
         Write-Host "Seed Info written to Overview File"
     }
     
@@ -235,7 +270,7 @@ if (-not $dry) {
     "**Seed:** *$($seed['Seed Number'])*" >> $detailFilePath
     "**Deck:** *$($seed['Deck Name'])*" >> $detailFilePath
     "**Stake:** *$($seed['Stake Color'])*" >> $detailFilePath
-    if (-not $s) {
+    if (-not $Silent) {
         Write-Host "Run Info written to Detail File"
     }
 
@@ -248,7 +283,7 @@ if (-not $dry) {
         "$index|$($joker['Card Name'])|$($joker['End Value'])|$($joker['Modifications'])" >> $detailFilePath
         $index = $index + 1
     }
-    if (-not $s) {
+    if (-not $Silent) {
         Write-Host "Joker Info written to Detail File"
     }
     
@@ -258,7 +293,7 @@ if (-not $dry) {
     foreach ($hand in $hands) {
         "$($hand['Hand Level'])|$($hand['Hand Name'])|$($hand['Chips x Mult'])|$($hand['Times Played'])" >> $detailFilePath
     }
-    if (-not $s) {
+    if (-not $Silent) {
         Write-Host "Hand Info written to Detail File"
     }
 
@@ -268,7 +303,7 @@ if (-not $dry) {
     foreach ($blind in $blinds) {
         "$($blind['Blind Name'])|$($blind['Blind Status'])|$($blind['Minimum Score'])|$($blind['Tag'])" >> $detailFilePath
     }
-    if (-not $s) {
+    if (-not $Silent) {
         Write-Host "Blind Info written to Detail File"
     }
     
@@ -276,7 +311,7 @@ if (-not $dry) {
     foreach ($voucher in $vouchers) {
         "$voucher," >> $detailFilePath
     }
-    if (-not $s) {
+    if (-not $Silent) {
         Write-Host "Voucher Info written to Detail File"
     }
     Write-Host "Finished."

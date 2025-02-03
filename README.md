@@ -20,6 +20,7 @@ flag | name | effect
 -d | detail | Display additional script runtime information
 -i | interactive | Enables GUI input for certain questions
 -s | silent | Does not dipslay output text
+-h | help | Display help menu
 
 ## Limitations
 ### Game Process
