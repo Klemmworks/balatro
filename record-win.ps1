@@ -8,7 +8,7 @@ param (
 
 if ($Help) {
     Write-Host "SYNTAX"
-    Write-Host "record-win.ps1 [options]"
+    Write-Host "    record-win.ps1 [options]"
     Write-Host ""
     Write-Host "OPTIONS"
     Write-Host "    -d, -dry           Display effects of running script without making changes"
