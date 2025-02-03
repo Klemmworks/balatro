@@ -16,6 +16,8 @@ Running the script will create the following file and folder in the script's loc
 ### Options 
 flag | name | effect
 -|-|-
+-dry | dry | Display effects of running script without committing changes
+-d | detail | Display additional script runtime information
 -i | interactive | Enables GUI input for certain questions
 -s | silent | Does not dipslay output text
 

@@ -132,134 +132,131 @@ function Get-Vouchers {
     return $vouchers
 }
 
-# Main script to collect all information
-function Main {
-    param (
-        [switch]$Dry = $false,
-        [switch]$Detail = $false
-    )
 
-    Write-Host "Welcome to the Balatro Winning Run Recorder!"
-    
-    # Collect seed information
-    $seed = Get-Seed
-    
-    # Collect deck information
-    $jokers = Get-Jokers
-    
-    # Collect hand information
-    $hands = Get-Hands
-    
-    # Collect blind information
-    $blinds = Get-Blinds
-    
-    # Collect voucher information
-    $vouchers = Get-Vouchers
+param (
+    [switch]$Dry = $false,
+    [switch]$Detail = $false,
+    [switch]$Silent = $false,
+    [switch]$Interactive = $false
+)
 
-    $scriptDirectory = $PSScriptRoot
-    $overviewFilePath = "$scriptDirectory\balatro.md"
-    $detailFilePath = "$scriptDirectory\winning-details\$($($seed['Deck Name']).Trim())-$($($seed['Stake Color']).Trim())-$($($seed['Seed Number']).Trim()).md"
+Write-Host "Welcome to the Balatro Winning Run Recorder!"
 
-    if (-Not (Test-Path $overviewFilePath)) {
-        # If the file does not exist, create it
-        if (-not $Dry) {
-            New-Item -Path $overviewFilePath -ItemType File
-            "## Winning Seeds" >> $overviewFilePath
-            "Run Seed|Deck Name|Stake" >> $overviewFilePath
-            "-|-|-" >> $overviewFilePath
-        }
-        Write-Host "File created: $overviewFilePath (should only happen once)"
-    } else {
-        Write-Host "File already exists: $overviewFilePath (this is good)"
-    }
+# Collect seed information
+$seed = Get-Seed
 
-    if (-Not (Test-Path $detailFilePath)) {
-        # If the file does not exist, create it
-        if (-not $Dry) {
-            $null = New-Item -Path $detailFilePath -ItemType File
-        }
-        Write-Host "File created: $detailFilePath (this is good)"
-    } else {
-        Write-Host "File already exists: $detailFilePath (this is bad)"
-    }
+# Collect deck information
+$jokers = Get-Jokers
 
-    if ($Detail -or $Dry) {
-        # Out-Console
-        Write-Host "Collected Information:"
-        Write-Host "Seed Info: Seed Number - $($seed['Seed Number']), Deck Name - $($seed['Deck Name']), Stake Color - $($seed['Stake Color'])"
+# Collect hand information
+$hands = Get-Hands
 
-        Write-Host "Deck Info:"
-        foreach ($joker in $jokers) {
-            Write-Host "Card: $($joker['Card Name']), End Value: $($joker['End Value']), Modifications: $($joker['Modifications'])"
-        }
+# Collect blind information
+$blinds = Get-Blinds
 
-        Write-Host "Hand Info:"
-        foreach ($hand in $hands) {
-            Write-Host "Hand Level: $($hand['Hand Level']), Chips x Mult: $($hand['Chips x Mult']), Times Played: $($hand['Times Played'])"
-        }
+# Collect voucher information
+$vouchers = Get-Vouchers
 
-        Write-Host "Blind Info:"
-        foreach ($blind in $blinds) {
-            Write-Host "Blind Status: $($blind['Blind Status']), Min Score: $($blind['Minimum Score']), Tag: $($blind['Tag'])"
-            if ($blind.ContainsKey("Boss Blind Name")) {
-                Write-Host "Boss Blind Name: $($blind['Boss Blind Name'])"
-            }
-        }
+$scriptDirectory = $PSScriptRoot
+$overviewFilePath = "$scriptDirectory\balatro.md"
+$detailFilePath = "$scriptDirectory\winning-details\$($($seed['Deck Name']).Trim())-$($($seed['Stake Color']).Trim())-$($($seed['Seed Number']).Trim()).md"
 
-        Write-Host "Voucher Info:"
-        foreach ($voucher in $vouchers) {
-            Write-Host "Voucher Name: $voucher"
-        }
-    }
-
+if (-Not (Test-Path $overviewFilePath)) {
+    # If the file does not exist, create it
     if (-not $Dry) {
-        # Out-File 
-        "$($seed['Seed Number'])|$($seed['Deck Name'])|$($seed['Stake Color'])" >> $overviewFilePath
-        Write-Host "Seed Info written to Overview File"
-        
+        New-Item -Path $overviewFilePath -ItemType File
+        "## Winning Seeds" >> $overviewFilePath
+        "Run Seed|Deck Name|Stake" >> $overviewFilePath
+        "-|-|-" >> $overviewFilePath
+    }
+    Write-Host "File created: $overviewFilePath (should only happen once)"
+} else {
+    Write-Host "File already exists: $overviewFilePath (this is good)"
+}
 
-        "# $($seed['Deck Name'])-$($seed['Stake Color'])-$($seed['Seed Number'])" >> $detailFilePath
-        "**Seed:** *$($seed['Seed Number'])*" >> $detailFilePath
-        "**Deck:** *$($seed['Deck Name'])*" >> $detailFilePath
-        "**Stake:** *$($seed['Stake Color'])*" >> $detailFilePath
-        Write-Host "Run Info written to Detail File"
-        
-        "## Jokers:" >> $detailFilePath
-        "*$ included when impactful" >> $detailFilePath
-        "Rank|Card|Value ($*x+)|Modifications" >> $detailFilePath
-        "-|-|-|- " >> $detailFilePath
-        $index = 1
-        foreach ($joker in $jokers) {
-            "$index|$($joker['Card Name'])|$($joker['End Value'])|$($joker['Modifications'])" >> $detailFilePath
-            $index = $index + 1
-        }
-        Write-Host "Joker Info written to Detail File"
+if (-Not (Test-Path $detailFilePath)) {
+    # If the file does not exist, create it
+    if (-not $Dry) {
+        $null = New-Item -Path $detailFilePath -ItemType File
+    }
+    Write-Host "File created: $detailFilePath (this is good)"
+} else {
+    Write-Host "File already exists: $detailFilePath (this is bad)"
+}
 
-        
-        "## Hands:" >> $detailFilePath
-        "Level|Hand|Chips x Mult|Play Count" >> $detailFilePath
-        "-|-|-|- " >> $detailFilePath
-        foreach ($hand in $hands) {
-            "$($hand['Hand Level'])|$($hand['Hand Name'])|$($hand['Chips x Mult'])|$($hand['Times Played'])" >> $detailFilePath
-        }
-        Write-Host "Hand Info written to Detail File"
-        
-        "## Blinds:" >> $detailFilePath
-        "Blind|Status|Min|Tag" >> $detailFilePath
-        "-|-|-|- " >> $detailFilePath
-        foreach ($blind in $blinds) {
-            "$($blind['Blind Name'])|$($blind['Blind Status'])|$($blind['Minimum Score'])|$($blind['Tag'])" >> $detailFilePath
-        }
-        Write-Host "Blind Info written to Detail File"
+if ($Detail -or $Dry) {
+    # Out-Console
+    Write-Host "Collected Information:"
+    Write-Host "Seed Info: Seed Number - $($seed['Seed Number']), Deck Name - $($seed['Deck Name']), Stake Color - $($seed['Stake Color'])"
 
-        
-        "## Vouchers:" >> $detailFilePath
-        foreach ($voucher in $vouchers) {
-            "$voucher," >> $detailFilePath
+    Write-Host "Deck Info:"
+    foreach ($joker in $jokers) {
+        Write-Host "Card: $($joker['Card Name']), End Value: $($joker['End Value']), Modifications: $($joker['Modifications'])"
+    }
+
+    Write-Host "Hand Info:"
+    foreach ($hand in $hands) {
+        Write-Host "Hand Level: $($hand['Hand Level']), Chips x Mult: $($hand['Chips x Mult']), Times Played: $($hand['Times Played'])"
+    }
+
+    Write-Host "Blind Info:"
+    foreach ($blind in $blinds) {
+        Write-Host "Blind Status: $($blind['Blind Status']), Min Score: $($blind['Minimum Score']), Tag: $($blind['Tag'])"
+        if ($blind.ContainsKey("Boss Blind Name")) {
+            Write-Host "Boss Blind Name: $($blind['Boss Blind Name'])"
         }
-        Write-Host "Voucher Info written to Detail File"
+    }
+
+    Write-Host "Voucher Info:"
+    foreach ($voucher in $vouchers) {
+        Write-Host "Voucher Name: $voucher"
     }
 }
 
-# Run the main function
-Main
+if (-not $Dry) {
+    # Out-File 
+    "$($seed['Seed Number'])|$($seed['Deck Name'])|$($seed['Stake Color'])" >> $overviewFilePath
+    Write-Host "Seed Info written to Overview File"
+    
+
+    "# $($seed['Deck Name'])-$($seed['Stake Color'])-$($seed['Seed Number'])" >> $detailFilePath
+    "**Seed:** *$($seed['Seed Number'])*" >> $detailFilePath
+    "**Deck:** *$($seed['Deck Name'])*" >> $detailFilePath
+    "**Stake:** *$($seed['Stake Color'])*" >> $detailFilePath
+    Write-Host "Run Info written to Detail File"
+    
+    "## Jokers:" >> $detailFilePath
+    "*$ included when impactful" >> $detailFilePath
+    "Rank|Card|Value ($*x+)|Modifications" >> $detailFilePath
+    "-|-|-|- " >> $detailFilePath
+    $index = 1
+    foreach ($joker in $jokers) {
+        "$index|$($joker['Card Name'])|$($joker['End Value'])|$($joker['Modifications'])" >> $detailFilePath
+        $index = $index + 1
+    }
+    Write-Host "Joker Info written to Detail File"
+
+    
+    "## Hands:" >> $detailFilePath
+    "Level|Hand|Chips x Mult|Play Count" >> $detailFilePath
+    "-|-|-|- " >> $detailFilePath
+    foreach ($hand in $hands) {
+        "$($hand['Hand Level'])|$($hand['Hand Name'])|$($hand['Chips x Mult'])|$($hand['Times Played'])" >> $detailFilePath
+    }
+    Write-Host "Hand Info written to Detail File"
+    
+    "## Blinds:" >> $detailFilePath
+    "Blind|Status|Min|Tag" >> $detailFilePath
+    "-|-|-|- " >> $detailFilePath
+    foreach ($blind in $blinds) {
+        "$($blind['Blind Name'])|$($blind['Blind Status'])|$($blind['Minimum Score'])|$($blind['Tag'])" >> $detailFilePath
+    }
+    Write-Host "Blind Info written to Detail File"
+
+    
+    "## Vouchers:" >> $detailFilePath
+    foreach ($voucher in $vouchers) {
+        "$voucher," >> $detailFilePath
+    }
+    Write-Host "Voucher Info written to Detail File"
+}
