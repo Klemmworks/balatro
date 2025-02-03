@@ -23,7 +23,7 @@ flag | name | effect
 ### Game Process
 This doesn't hook into the running game process whatsoever. This script only prompts you to record the data available to you at the end of a winning run. You will need to enter 'Endless Mode' to retrieve the necessary information after obtaining the seed.
 ### Error Handling
-There is LITTLE TO NONE error handling. If something goes wrong, please accept this apology. (worst case, you'll probably just have to write all the info down again)
+There is LITTLE TO NONE error handling. If something goes wrong, please accept [this apology](/img/wof.jpg). (worst case, you'll probably just have to write all the info down again)
 
 ## Notes
 #### True Project Impetus
