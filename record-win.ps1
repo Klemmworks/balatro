@@ -19,29 +19,6 @@ if ($Help) {
     exit
 }
 
-if ($Silent) {
-    Write-Host "Silent mode enabled"
-}
-
-if (-not $Silent) {
-    if ($Dry) {
-        Write-Host "Dry run enabled"
-    }
-    
-    if ($Verbose) {
-        Write-Host "Verbose mode enabled"
-    }
-
-    if ($Interactive) {
-        Write-Host "Interactive mode enabled"
-    }
-}
-
-if ($Interactive) {
-    Write-Host "Sorry, that feature isn't completely ready yet. Please try again later.";
-    exit
-}
-
 # Function to ask for seed information
 function Get-Seed {
     Write-Host "================== Run Overview =================="
@@ -190,7 +167,30 @@ Write-Host "__==============================================__"
 Write-Host "||----------------------------------------------||"
 Write-Host "|| Welcome to the Balatro Winning Run Recorder! ||"
 Write-Host "||----------------------------------------------||"
-Write-Host "=================================================="
+
+Write-Host "==================== Options ====================="
+if ($Silent) {
+    Write-Host "|| Silent mode enabled"
+}
+if ($Dry) {
+    if (-not $Silent) {
+        Write-Host "|| Dry run enabled"
+    }
+}
+if ($Verbose) {
+    if (-not $Silent) {
+        Write-Host "|| Verbose mode enabled"
+    }
+}
+if ($Interactive) {
+    if (-not $Silent) {
+        Write-Host "|| Interactive mode enabled"
+    }
+}
+if ($Interactive) {
+    Write-Host "|| Sorry, that feature isn't completely ready yet. Please try again later.";
+    exit
+}
 
 $seed = Get-Seed
 $jokers = Get-Jokers
@@ -199,10 +199,8 @@ $blinds = Get-Blinds
 $vouchers = Get-Vouchers
 $notes = Get-Notes
 
-Write-Host "=================================================="
-Write-Host "||                Input Finished                ||"
-Write-Host "=================================================="
-Write-Host ""
+Write-Host "================= Input Finished ================="
+Write-Host "||"
 Write-Host "===================== Output ====================="
 
 $scriptDirectory = $PSScriptRoot
