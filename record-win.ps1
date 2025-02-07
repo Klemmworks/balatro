@@ -177,22 +177,23 @@ function Get-Vouchers {
     return $vouchers
 }
 
+function Get-Notes {
+    Write-Host "========= Additional Notes ========="
+    $notes = Read-Host "|| Run Notes (none)"
+    if ($notes -eq "") {
+        $notes = "none"
+    }
+    return $notes
+}
+
 Write-Host "Welcome to the Balatro Winning Run Recorder!"
 
-# Collect seed information
 $seed = Get-Seed
-
-# Collect deck information
 $jokers = Get-Jokers
-
-# Collect hand information
 $hands = Get-Hands
-
-# Collect blind information
 $blinds = Get-Blinds
-
-# Collect voucher information
 $vouchers = Get-Vouchers
+$notes = Get-Notes
 
 $scriptDirectory = $PSScriptRoot
 $overviewFilePath = "$scriptDirectory\balatro.md"
@@ -314,5 +315,13 @@ if (-not $Dry) {
     if (-not $Silent) {
         Write-Host "Voucher Info written to Detail File"
     }
+
+    "## Run Notes:" >> $detailFilePath
+    $notes >> $detailFilePath
+    if (-not $Silent) {
+        Write-Host "Run Notes written to Detail File"
+    }
+
+
     Write-Host "Finished."
 }
