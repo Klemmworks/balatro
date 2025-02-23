@@ -79,10 +79,21 @@ function Get-Jokers {
 function Get-Hands {
     Write-Host "================= Upgraded Hands ================="
     $hands = @()
-    $handLevels = @("Flush Full House", "Straight Flush", "Four of a Kind", "Full House", "Flush", "Straight", "Three of a Kind", "Two Pair", "Pair", "High Card")
-    $withflushfullhouse = Read-Host "|| Flush Full House? (y/N)"
-    if ($withflushfullhouse -eq "") {
-        $handLevels = @("Straight Flush", "Four of a Kind", "Full House", "Flush", "Straight", "Three of a Kind", "Two Pair", "Pair", "High Card")
+    $handLevels = @("Straight Flush", "Four of a Kind", "Full House", "Flush", "Straight", "Three of a Kind", "Two Pair", "Pair", "High Card")
+    $withfiveofakind = Read-Host "|| Five of a Kind? (y/N)"
+    $result = $withfiveofakind[0].ToLower()
+    if ($result -eq "y") {
+        $handLevels = "Five of a Kind" + $handLevels
+    }
+    $withflushhouse = Read-Host "|| Flush House? (y/N)"
+    $result = $withflushhouse[0].ToLower()
+    if ($result -eq "y") {
+        $handLevels = "Flush House" + $handLevels
+    }
+    $withflushfive = Read-Host "|| Flush Five? (y/N)"
+    $result = $withflushfive[0].ToLower()
+    if ($result -eq "y") {
+        $handLevels = "Flush Five" + $handLevels
     }
     Write-Host "||------------------------------------------------"
     
