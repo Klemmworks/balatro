@@ -79,21 +79,35 @@ function Get-Jokers {
 function Get-Hands {
     Write-Host "================= Upgraded Hands ================="
     $hands = @()
-    $handLevels = @("Straight Flush", "Four of a Kind", "Full House", "Flush", "Straight", "Three of a Kind", "Two Pair", "Pair", "High Card")
+    $handLevels = New-Object System.Collections.Generic.List[System.String]
+    $handLevels.Add("Straight Flush")
+    $handLevels.Add("Four of a Kind")
+    $handLevels.Add("Full House")
+    $handLevels.Add("Flush")
+    $handLevels.Add("Straight")
+    $handLevels.Add("Three of a Kind")
+    $handLevels.Add("Two Pair")
+    $handLevels.Add("Pair")
+    $handLevels.Add("High Card")
+    
+    #$handLevels = @("Straight Flush", "Four of a Kind", "Full House", "Flush", "Straight", "Three of a Kind", "Two Pair", "Pair", "High Card")
     $withfiveofakind = Read-Host "|| Five of a Kind? (y/N)"
-    $result = $withfiveofakind[0].ToLower()
+    $result = ($withfiveofakind.ToLower())[0]
     if ($result -eq "y") {
-        $handLevels = "Five of a Kind" + $handLevels
+        $handLevels.Insert(0, "Five of a Kind")
+        #$handLevels = "Five of a Kind" + $handLevels
     }
     $withflushhouse = Read-Host "|| Flush House? (y/N)"
-    $result = $withflushhouse[0].ToLower()
+    $result = ($withflushhouse.ToLower())[0]
     if ($result -eq "y") {
-        $handLevels = "Flush House" + $handLevels
+        $handLevels.Insert(0, "Flush House")
+        #$handLevels = "Flush House" + $handLevels
     }
     $withflushfive = Read-Host "|| Flush Five? (y/N)"
-    $result = $withflushfive[0].ToLower()
+    $result = ($withflushfive.ToLower())[0]
     if ($result -eq "y") {
-        $handLevels = "Flush Five" + $handLevels
+        $handLevels.Insert(0, "Flush Five")
+        #$handLevels = "Flush Five" + $handLevels
     }
     Write-Host "||------------------------------------------------"
     
